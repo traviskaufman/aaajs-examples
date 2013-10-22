@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>11 - Non-blocking UI Rendering</title>
+    <link rel="stylesheet" type="text/css" href="/vendor/bootstrap.min.css">
+    <style type="text/css">
+      .box {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        margin-right: 1px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div>
+        <button id="append-sync" class="btn btn-primary">Append (Sync)</button>
+        <button id="append-async" class="btn btn-primary">Append (Async)</button>
+      </div>
+      <div id="boxes">
+      </div>
+    </div>
+    <script type="text/javascript" src="script.js">
+    </script>
+  </body>
+</html>
