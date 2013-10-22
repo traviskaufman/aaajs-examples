@@ -4,42 +4,44 @@
   var slice = global.Array.prototype.slice;
 
   var searchBox = document.getElementById('query');
-  var throttleCb = document.getElementById('throttle');
+  var debounceCb = document.getElementById('debounce');
   var resultsCntr = document.getElementById('results');
-  var doThrottle = false;
+  var doDebounce = false;
+  var oldVal;
 
-  // Throttled version of search
-  var throttledSearch = throttle(search, 250);
+  // debounced version of search
+  var debouncedSearch = debounce(search, 250);
 
   function clear() {
     resultsCntr.innerHTML = '';
   }
 
-  function throttle(fn, quietPeriod) {
-    var throttled = false;
+  function debounce(fn, quietPeriod) {
     var args = [];
+    var timer = 0;
+    var debounced = false;
 
     return function() {
-      if (throttled) {
-        args = slice.call(arguments);
-        return;
+      args = slice.call(arguments);
+
+      if (debounced && timer) {
+        clearTimeout(timer);
       }
 
-      setTimeout(function() {
-        throttled = false;
+      timer = setTimeout(function() {
+        debounced = false;
         fn.apply(null, args);
       }, quietPeriod);
 
-      throttled = true;
-    }
+      debounced = true;
+    };
   }
 
   function search(query, onsuccess, onerror) {
     if (!query.length) {
+      clear();
       return;
     }
-
-    console.log('Searching for', query);
 
     var xhr = new XHR();
     xhr.open('GET', '/words?q=' + query, true);
@@ -87,13 +89,20 @@
     resultsCntr.appendChild(p);
   }
 
-  throttleCb.addEventListener('click', function() {
-    doThrottle = throttleCb.checked;
+  debounceCb.addEventListener('click', function() {
+    doDebounce = debounceCb.checked;
   });
 
   searchBox.addEventListener('keyup', function() {
     var val = searchBox.value;
-    (doThrottle ? throttledSearch : search)(val, function(res) {
+    if (val === oldVal) {
+      // Don't make duplicate requests
+      return;
+    }
+
+    oldVal = val;
+
+    (doDebounce ? debouncedSearch : search)(val, function(res) {
       displayWords(res, val);
     }, displayError);
   });
