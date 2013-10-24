@@ -10,30 +10,32 @@
   var oldVal;
 
   // debounced version of search
-  var debouncedSearch = debounce(search, 250);
+  var debouncedSearch = debounce(search, 175);
 
   function clear() {
     resultsCntr.innerHTML = '';
   }
 
   function debounce(fn, quietPeriod) {
-    var args = [];
+    // Keep a closure to the queued up function's timer ID.
     var timer = 0;
-    var debounced = false;
 
     return function() {
-      args = slice.call(arguments);
+      // Keep track of the correct arguments to pass to the debounced fn.
+      var args = slice.call(arguments);
 
-      if (debounced && timer) {
+      // Discard the previous queued up function if there was one
+      if (timer) {
         clearTimeout(timer);
       }
 
+      // Set fn to execute quietPeriod ms in the future
       timer = setTimeout(function() {
-        debounced = false;
+        // When the quiet period is up call the function with the given
+        // correct arguments (stored in args)
         fn.apply(null, args);
+        timer = 0;
       }, quietPeriod);
-
-      debounced = true;
     };
   }
 

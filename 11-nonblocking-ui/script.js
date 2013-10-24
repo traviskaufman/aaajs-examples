@@ -58,7 +58,6 @@
         clearInterval(timerId);
         timerId = 0;
       } else {
-        console.log(numBoxes);
         add();
       }
     }, 0);
